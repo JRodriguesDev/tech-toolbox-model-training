@@ -1,5 +1,7 @@
 import tensorflow_datasets as tfds
+import tensorflow as tf
 import pickle as pk
+import matplotlib.pyplot as plt
 
 def view_dataset(dataset_name):
     return tfds.load(dataset_name, split='train', download=False, data_dir=f'./db/dataset/{dataset_name}', with_info=True)
@@ -25,5 +27,20 @@ def to_data_frame_cifar100():
     with open('./db/datas/cifar100/data_train.pkl', mode='wb') as f:
         pk.dump(datas, f)
 
+car_dataset = tf.keras.utils.image_dataset_from_directory('./db/dataset/car_dataset/test', batch_size=None)
+class_names = car_dataset.class_names
 
-to_data_frame_cifar100()
+datas = []
+
+for i, (img, label) in enumerate(car_dataset):
+    datas.append({
+        'img': img.numpy(),
+        'label': label.numpy()
+    })
+    
+with open('./db/datas/cars/data_test.pkl', mode='wb') as f:
+    pk.dump([datas, class_names], f)
+
+
+
+
