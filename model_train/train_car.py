@@ -1,6 +1,6 @@
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import InputLayer, Dense, Flatten, Dropout, Conv2D, MaxPooling2D, BatchNormalization, Rescaling
+from tensorflow.keras.layers import InputLayer, Dense, Flatten, Dropout, Conv2D, MaxPooling2D, BatchNormalization, Rescaling, GlobalAveragePooling2D
 from tensorflow.keras import utils as np_utils
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
@@ -47,14 +47,19 @@ model.add(MaxPooling2D(pool_size=(2, 2)))
 model.add(Conv2D(128, (3, 3), padding='same', activation='relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
-model.add(Flatten())
+model.add(Conv2D(512, (3, 3), padding='same', activation='relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+
+model.add(GlobalAveragePooling2D())
 
 model.add(Dense(units=128, activation='relu'))
-model.add(Dropout(0.2))
+model.add(Dropout(0.25))
 model.add(Dense(units=128, activation='relu'))
-model.add(Dropout(0.2))
+model.add(Dropout(0.25))
 model.add(Dense(units=128, activation='relu'))
-model.add(Dropout(0.2))
+model.add(Dropout(0.25))
+model.add(Dense(units=128, activation='relu'))
+model.add(Dropout(0.25))
 
 
 model.add(Dense(units=48, activation='softmax'))
@@ -79,8 +84,8 @@ callback_list = [
     )
 ]
 
-history = model.fit(base_train, epochs=100, shuffle=True, callbacks=callback_list, validation_data=base_test)
-model.save('/content/drive/MyDrive/models/cars/modelV5.keras')
+history = model.fit(base_train, epochs=250, shuffle=True, callbacks=callback_list, validation_data=base_test)
+model.save('/content/drive/MyDrive/models/cars/modelV6.keras')
 
 model.evaluate(base_test)
 
