@@ -4,6 +4,7 @@ from tensorflow.keras.layers import InputLayer, Dense, Flatten, Dropout, Conv2D,
 from tensorflow.keras import utils as np_utils
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
+from tensorflow.keras.utils import plot_model
 
 import matplotlib.pyplot as plt
 import pickle as pk
@@ -47,19 +48,22 @@ model.add(MaxPooling2D(pool_size=(2, 2)))
 model.add(Conv2D(128, (3, 3), padding='same', activation='relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
+model.add(Conv2D(256, (3, 3), padding='same', activation='relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+
 model.add(Conv2D(512, (3, 3), padding='same', activation='relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
 model.add(GlobalAveragePooling2D())
 
-model.add(Dense(units=128, activation='relu'))
-model.add(Dropout(0.25))
-model.add(Dense(units=128, activation='relu'))
-model.add(Dropout(0.25))
-model.add(Dense(units=128, activation='relu'))
-model.add(Dropout(0.25))
-model.add(Dense(units=128, activation='relu'))
-model.add(Dropout(0.25))
+model.add(Dense(units=256, activation='relu'))
+model.add(Dropout(0.3))
+model.add(Dense(units=256, activation='relu'))
+model.add(Dropout(0.3))
+model.add(Dense(units=256, activation='relu'))
+model.add(Dropout(0.3))
+model.add(Dense(units=256, activation='relu'))
+model.add(Dropout(0.3))
 
 
 model.add(Dense(units=48, activation='softmax'))
@@ -67,6 +71,8 @@ model.add(Dense(units=48, activation='softmax'))
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
 model.summary()
+
+plot_model(model, 'modelV10.png', show_shapes=True)
 
 callback_list = [
     EarlyStopping(
@@ -84,10 +90,10 @@ callback_list = [
     )
 ]
 
-history = model.fit(base_train, epochs=250, shuffle=True, callbacks=callback_list, validation_data=base_test)
-model.save('/content/drive/MyDrive/models/cars/modelV6.keras')
+history = model.fit(base_train, epochs=250, steps_per_epoch=50, shuffle=True, callbacks=callback_list, validation_data=base_test)
+model.save('/content/drive/MyDrive/models/cars/modelV9.keras')
 
-model.evaluate(base_test)
+model.evaluate(base_test, batch_size=128)
 
 print(history.history.keys())
 
